@@ -41,3 +41,6 @@ jspm_packages
 
 # Test file
 app.js
+
+# Test directory
+test/
