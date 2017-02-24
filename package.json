@@ -1,0 +1,24 @@
+{
+  "name": "ffmpeg-watchdog",
+  "version": "0.0.1",
+  "description": "Respawn an ffmpeg process that has exited. Designed for use when connecting to remote video sources that may be intermittent. Best used when timeout flags are passed to ffmpeg.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kevinGodell/ffmpeg-watchdog.git"
+  },
+  "keywords": [
+    "ffmpeg"
+  ],
+  "author": "Kevin Godell <kevin.godell@gmail.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/kevinGodell/ffmpeg-watchdog/issues"
+  },
+  "homepage": "https://github.com/kevinGodell/ffmpeg-watchdog#readme",
+  "dependencies": {},
+  "devDependencies": {}
+}
