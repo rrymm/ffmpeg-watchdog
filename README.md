@@ -19,16 +19,18 @@ stream1.on(FW.STDOUT_DATA, function (data) {
     doSomethingWithData;
 });
 
-stream1.init();//starts the process
+//initialize the process
+stream1.init();
 
-stream1.kill();//kills the process
+//kill the process with SIGKILL
+stream1.kill();
 ```
 
--`ffmpegParams(array)`: an array of ffmpeg flags that you would normally pass to ffmpeg on the command line.
+`ffmpegParams(array)`: an array of ffmpeg flags that you would normally pass to ffmpeg on the command line.
 
--`cameraName(string)`: a unique name that you assign to the instance which can be used when logging or debugging
+`cameraName(string)`: a unique name that you assign to the instance which can be used when logging or debugging
 
--`watchdogRetry(number 0 - 100)`: how many attempts at respawning a new ffmpeg process to reconnect to a video source, set to 0 to turn off
+`watchdogRetry(number 0 - 100)`: how many attempts at respawning a new ffmpeg process to reconnect to a video source, set to 0 to turn off
 
 `watchdogWait(number 5 - 300)`: how long to wait after detecting that ffmpeg has exited before spawning a new process
 
