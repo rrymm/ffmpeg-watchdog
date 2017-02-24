@@ -36,7 +36,7 @@ stream1.kill();
 
 `watchdogReset(number 10 - 300)`: how many seconds will ffmpeg have to run without exiting to be considered successful, used for resetting watchdog respawn attemps
 
-Please take a look in the <a href="https://github.com/kevinGodell/ffmpeg-watchdog/blob/master/examples/">examples folder</a>. There is an example for <a href="https://github.com/kevinGodell/ffmpeg-watchdog/blob/master/examples/http.js">http</a> and <a href="https://github.com/kevinGodell/ffmpeg-watchdog/blob/master/examples/rtsp.js">rtsp</a> remote video sources.
+Please take a look in the <a href="https://github.com/kevinGodell/ffmpeg-watchdog/tree/master/examples">examples folder</a>. There is an example for <a href="https://github.com/kevinGodell/ffmpeg-watchdog/blob/master/examples/http.js">http</a> and <a href="https://github.com/kevinGodell/ffmpeg-watchdog/blob/master/examples/rtsp.js">rtsp</a> remote video sources.
 
 
 
