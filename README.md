@@ -28,7 +28,7 @@ stream1.kill();
 
 `ffmpegParams(array)`: an array of ffmpeg flags that you would normally pass to ffmpeg on the command line.
 
-`cameraName(string)`: a unique name that you assign to the instance which can be used when logging or debugging
+`videoName(string)`: a unique name that you assign to the instance which can be used when logging or debugging
 
 `watchdogRetry(number 0 - 100)`: how many attempts at respawning a new ffmpeg process to reconnect to a video source, set to 0 to turn off
 
