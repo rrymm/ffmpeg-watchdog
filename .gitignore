@@ -41,6 +41,8 @@ jspm_packages
 
 # Test file
 app.js
+rtsp.js
+http.js
 
 # Test directory
 test/
