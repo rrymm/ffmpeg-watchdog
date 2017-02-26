@@ -66,7 +66,7 @@ var video1 = new FW(params, options)
 
 `options.name`: name of video, helps to identify ffmpeg process when logging data to console
 
-`options.retry(0 - 300)`: how many should watchdog attempt to restart ffmpeg process that has exited
+`options.retry(0 - 300)`: how many times should watchdog attempt to restart ffmpeg process that has exited
 
 `options.wait(5 - 300)`: how many seconds should watchdog wait to attempt to restart ffmpeg
 
