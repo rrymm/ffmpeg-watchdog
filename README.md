@@ -105,7 +105,7 @@ var video1 = new FW(params, options)
 **options.stdinI2PC:** set image2pipe codec to "mjpeg" if output on pipe:0 needs to be parsed into individual jpegs before emitting data
 
 #Warning
-If setting stdoutI2P, stderrI2P, or stdinI2P to "mjpeg" please ensure that you are using -c:v mjpeg and -f image2pipe in the ffmpeg params for that pipe, otherwise the buffer will not flush and your app will crash!
+If setting stdoutI2PC, stderrI2PC, or stdinI2PC to "mjpeg" please ensure that you are using -c:v mjpeg and -f image2pipe in the ffmpeg params for that pipe, otherwise the buffer will not flush and your app will crash!
 
 Please take a look in the <a href="https://github.com/kevinGodell/ffmpeg-watchdog/tree/master/examples">examples folder</a>. There is an example for <a href="https://github.com/kevinGodell/ffmpeg-watchdog/blob/master/examples/http.js">http</a> and <a href="https://github.com/kevinGodell/ffmpeg-watchdog/blob/master/examples/rtsp.js">rtsp</a> remote video sources.
 
