@@ -1,6 +1,8 @@
 // jshint esversion: 6, globalstrict: true, strict: true
 'use strict';
-var FW = require('ffmpeg-watchdog');
+var FW = require('../index');
+
+//pipe:0 = stdin, pipe:1 = stdout, pipe:2 = stderr, all pipes can be used to stream data from ffmpeg, -loglevel should be set to "quiet" to utilize stderr
 
 var params = [
     '-loglevel',
@@ -15,11 +17,17 @@ var params = [
     '10000000',
     '-i',
     'rtsp://50.73.56.89:554/axis-media/media.amp',
+    
+    /*stdin*/
+    
     '-c:v',
     'copy',
     '-f',
     'mpegts',
     'pipe:0',
+    
+    /*stdout*/
+    
     '-c:v',
     'copy',
     '-f',
@@ -27,6 +35,9 @@ var params = [
     '-movflags',
     '+empty_moov',
     'pipe:1',
+    
+    /*stderr*/
+    
     '-c:v',
     'copy',
     '-f',
