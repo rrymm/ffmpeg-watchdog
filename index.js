@@ -90,7 +90,7 @@ FfmpegWatchdog.prototype._addListeners = function () {
         this._ffmpegExit(code, signal);
     });
     if (this._stdoutJpeg === true) {
-        this._stdoutP2J = new P2j().on('jpeg', (jpeg) => {
+        this._stdoutP2J = new P2J().on('jpeg', (jpeg) => {
             this.emit(STDOUT_DATA, jpeg);
         });
         this._ffmpeg.stdout.pipe(this._stdoutP2J);
@@ -100,7 +100,7 @@ FfmpegWatchdog.prototype._addListeners = function () {
         });
     }
     if (this._stderrJpeg === true) {
-        this._stderrP2J = new P2j().on('jpeg', (jpeg) => {
+        this._stderrP2J = new P2J().on('jpeg', (jpeg) => {
             this.emit(STDERR_DATA, jpeg);
         });
         this._ffmpeg.stderr.pipe(this._stderrP2J);
@@ -110,7 +110,7 @@ FfmpegWatchdog.prototype._addListeners = function () {
         });
     }
     if (this._stdinJpeg === true) {
-        this._stdinP2J = new P2j().on('jpeg', (jpeg) => {
+        this._stdinP2J = new P2J().on('jpeg', (jpeg) => {
             this.emit(STDIN_DATA, jpeg);
         });
         this._ffmpeg.stdin.pipe(this._stdinP2J);

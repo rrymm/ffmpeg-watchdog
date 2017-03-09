@@ -47,8 +47,8 @@ var params = [
 
 var options = {
     name : 'video1',//name of video, helps to identify ffmpeg process when logging data to console
-    retry : 5,//how many times watchdog should attempt to restart ffmpeg process that has exited
-    wait : 10,//how many seconds should the watchdog wait to attempt to restart ffmpeg
+    retry : 10,//how many times watchdog should attempt to restart ffmpeg process that has exited
+    wait : 2,//how many seconds should the watchdog wait to attempt to restart ffmpeg
     reset : 20//how many seconds should ffmpeg be running to be considered good, used for resetting watchdog attempts
 };
 
