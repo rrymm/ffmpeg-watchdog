@@ -4,6 +4,7 @@
 const util = require('util');
 const EventEmitter = require('events').EventEmitter;
 const spawn = require('child_process').spawn;
+const P2J = require('pipe2jpeg');
 const ERROR = 'error';
 const STDOUT_DATA = 'stdoutData';
 const STDERR_DATA = 'stderrData';
@@ -20,19 +21,19 @@ function FfmpegWatchdog(params, options) {
     this._name = this._validateName(this._parseOptions('name', options));
     this._watchDog = {
         retry : this._validateNumber(this._parseOptions('retry', options), 0, 0, 100),
-        wait : this._validateNumber(this._parseOptions('wait', options), 5, 5, 300),
+        wait : this._validateNumber(this._parseOptions('wait', options), 5, 1, 300),
         reset : this._validateNumber(this._parseOptions('reset', options), 10, 10, 300),
         timer : null,
         last : null,
         attempts : 0
     };
+    this._stdinJpeg = this._parseOptions('stdinJpeg', options);
+    this._stdoutJpeg = this._parseOptions('stdoutJpeg', options);
+    this._stderrJpeg = this._parseOptions('stderrJpeg', options);
+    this._stdinP2J = null;
+    this._stdoutP2J = null;
+    this._stderrP2J = null;
     this._ffmpeg = null;
-    this._stdoutBuffer = null;
-    this._stderrBuffer = null;
-    this._stdinBuffer = null;
-    this._stdoutI2PC = this._validateI2PC(this._parseOptions('stdoutI2PC', options));
-    this._stderrI2PC = this._validateI2PC(this._parseOptions('stderrI2PC', options));
-    this._stdinI2PC = this._validateI2PC(this._parseOptions('stdinI2PC', options));
     return this;
 }
 
@@ -54,6 +55,7 @@ FfmpegWatchdog.prototype.kill = function () {
         this._removeListeners();
         this._resetWatchDog();
         this._ffmpeg.kill('SIGKILL');
+        //todo this_ffmpeg = null;
     }
     return this;
 };
@@ -81,25 +83,41 @@ FfmpegWatchdog.prototype._spawn = function () {
 
 //private, add listeners
 FfmpegWatchdog.prototype._addListeners = function () {
-    this._ffmpeg.on('error', () => {throw new Error('FfmpegPiper says: "Unable to start ffmpeg! Are you sure it is installed?"');});
-    this._ffmpeg.on('exit', (code, signal) => {this._ffmpegExit(code, signal);});
-    if (this._stdoutI2PC) {
-        this._stdoutBuffer = Buffer.allocUnsafe(0);
-        this._ffmpeg.stdout.on('data', (data) => {this._stdoutBuffer = this._parseImage2pipe(data, this._stdoutBuffer, STDOUT_DATA, this._stdoutI2PC);});
+    this._ffmpeg.on('error', () => {
+        throw new Error('FfmpegPiper says: "Unable to start ffmpeg! Are you sure it is installed?"');
+    });
+    this._ffmpeg.on('exit', (code, signal) => {
+        this._ffmpegExit(code, signal);
+    });
+    if (this._stdoutJpeg === true) {
+        this._stdoutP2J = new P2j().on('jpeg', (jpeg) => {
+            this.emit(STDOUT_DATA, jpeg);
+        });
+        this._ffmpeg.stdout.pipe(this._stdoutP2J);
     } else {
-        this._ffmpeg.stdout.on('data', (data) => {this.emit(STDOUT_DATA, data);});
+        this._ffmpeg.stdout.on('data', (data) => {
+            this.emit(STDOUT_DATA, data);
+        });
     }
-    if (this._stderrI2PC) {
-        this._stderrBuffer = Buffer.allocUnsafe(0);
-        this._ffmpeg.stderr.on('data', (data) => {this._stderrBuffer = this._parseImage2pipe(data, this._stderrBuffer, STDERR_DATA, this._stderrI2PC);});
+    if (this._stderrJpeg === true) {
+        this._stderrP2J = new P2j().on('jpeg', (jpeg) => {
+            this.emit(STDERR_DATA, jpeg);
+        });
+        this._ffmpeg.stderr.pipe(this._stderrP2J);
     } else {
-        this._ffmpeg.stderr.on('data', (data) => {this.emit(STDERR_DATA, data);});
+        this._ffmpeg.stderr.on('data', (data) => {
+            this.emit(STDERR_DATA, data);
+        });
     }
-    if (this._stdinI2PC) {
-        this._stdinBuffer = Buffer.allocUnsafe(0);
-        this._ffmpeg.stdin.on('data', (data) => {this._stdinBuffer = this._parseImage2pipe(data, this._stdinBuffer, STDIN_DATA, this._stdinI2PC);});
+    if (this._stdinJpeg === true) {
+        this._stdinP2J = new P2j().on('jpeg', (jpeg) => {
+            this.emit(STDIN_DATA, jpeg);
+        });
+        this._ffmpeg.stdin.pipe(this._stdinP2J);
     } else {
-        this._ffmpeg.stdin.on('data', (data) => {this.emit(STDIN_DATA, data);});
+        this._ffmpeg.stdin.on('data', (data) => {
+            this.emit(STDIN_DATA, data);
+        });
     }
 };
 
@@ -107,9 +125,27 @@ FfmpegWatchdog.prototype._addListeners = function () {
 FfmpegWatchdog.prototype._removeListeners = function () {
     this._ffmpeg.removeAllListeners('error');
     this._ffmpeg.removeAllListeners('exit');
-    this._ffmpeg.stdout.removeAllListeners('data');
-    this._ffmpeg.stderr.removeAllListeners('data');
-    this._ffmpeg.stdin.removeAllListeners('data');
+    if (this._stdoutJpeg === true) {
+        this._ffmpeg.stdout.unpipe(this._stdoutP2J);
+        this._stdoutP2J.removeAllListeners('jpeg');
+        this._stdoutP2J = null;
+    } else {
+        this._ffmpeg.stdout.removeAllListeners('data');
+    }
+    if (this._stdinJpeg === true) {
+        this._ffmpeg.stdin.unpipe(this._stdinP2J);
+        this._stdinP2J.removeAllListeners('jpeg');
+        this._stdinP2J = null;
+    } else {
+        this._ffmpeg.stdin.removeAllListeners('data');
+    }
+    if (this._stderrJpeg === true) {
+        this._ffmpeg.stderr.unpipe(this._stderrP2J);
+        this._stderrP2J.removeAllListeners('jpeg');
+        this._stderrP2J = null;
+    } else {
+        this._ffmpeg.stderr.removeAllListeners('data');
+    }
 };
 
 //private, cancel watchDog timer and reset attempts
@@ -217,53 +253,6 @@ FfmpegWatchdog.prototype._parseOptions = function (option, options) {
 FfmpegWatchdog.prototype._getTimeStamp = function () {
     return Date.now().toString(36).toUpperCase();
 };
-
-//private, buffer and parse stdout data and then emit
-FfmpegWatchdog.prototype._parseImage2pipe = function (data, buffer, event, marker) {
-    var length = data.length;
-    //if (data.readUInt16BE(length - 2) === 0xFFD9) {//65497
-    //if (data[length - 2] === 0xFF && data[length - 1] === 0xD9) {//255 && 217
-    //if (data.readUInt8(length - 2) === 0xFF && data.readUInt8(length - 1) === 0xD9) {//255 && 217
-    if (data.readUInt8(--length) === marker[1] && data.readUInt8(--length) === marker[0]) {
-        if (buffer.length === 0) {
-            this.emit(event, data);
-        } else {
-            this.emit(event, Buffer.concat([buffer, data]));
-            buffer = Buffer.allocUnsafe(0);
-        }
-    } else {
-        if (buffer.length === 0) {
-            buffer = Buffer.from(data);
-        } else {
-            buffer = Buffer.concat([buffer, data]);
-        }
-    }
-    return buffer;
-}
-
-//private, return last 2 bytes of image end marker as array from image2pipe codec
-FfmpegWatchdog.prototype._validateI2PC = function (codec) {
-    switch (codec) {
-        case 'mjpeg' :
-        case 'jpeg2000' :
-        case 'jpegls' :
-        case 'ljpeg' :
-            return [0xFF, 0xD9];//255 217
-            break;
-        case 'png' :
-            return [0x60, 0x82];//96 130
-            break;
-        case 'tiff' :
-            return [0x0, 0x0];//0 0
-            break;
-        case 'gif' :
-            return [0x0, 0x3B];//0 59
-            break;
-        default :
-            return null;
-            break;
-    }
-}
 
 //export constructor
 module.exports = FfmpegWatchdog;

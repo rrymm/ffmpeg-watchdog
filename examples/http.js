@@ -19,12 +19,13 @@ var params = [
     '-c:v',
     'mjpeg',
     '-r',
-    '10',
+    '25',
     '-q:v',
     '2',
     '-s',
     '160x120',
-    '-f', 'image2pipe',
+    '-f',
+    'image2pipe',
     'pipe:0',
 
     /*stdout*/
@@ -32,7 +33,7 @@ var params = [
     '-c:v',
     'mjpeg',
     '-r',
-    '5',
+    '10',
     '-q:v',
     '1',
     '-s',
@@ -46,7 +47,7 @@ var params = [
     '-c:v',
     'mjpeg',
     '-r',
-    '2',
+    '5',
     '-q:v',
     '1',
     '-s',
@@ -58,25 +59,26 @@ var params = [
 
 var options = {
     name : 'video1',//name of video, helps to identify ffmpeg process when logging data to console
-    retry : 5,//how many times watchdog should attempt to restart ffmpeg process that has exited
-    wait : 10,//how many seconds should the watchdog wait to attempt to restart ffmpeg
+    retry : 10,//how many times watchdog should attempt to restart ffmpeg process that has exited
+    wait : 2,//how many seconds should the watchdog wait to attempt to restart ffmpeg
     reset : 20,//how many seconds should ffmpeg be running to be considered good, used for resetting watchdog attempts
-    stdinI2PC : 'mjpeg',//output on pipe:0 needs to be parsed into individual jpegs before emitting data
-    stdoutI2PC : 'mjpeg',//output on pipe:1 needs to be parsed into individual jpegs before emitting data
-    stderrI2PC : 'mjpeg'//output on pipe:2 needs to be parsed into individual jpegs before emitting data
+    stdinJpeg : true,//set to true if output on pipe:0 needs to be parsed into individual jpegs before emitting data
+    stdoutJpeg : true,//set to true if output on pipe:1 needs to be parsed into individual jpegs before emitting data
+    stderrJpeg : true//set to true if output on pipe:2 needs to be parsed into individual jpegs before emitting data
 };
 
 //create new instance and attach listeners and call .init() to start
 var video1 = new FW(params, options)
     .on(FW.ERROR, (type, code, signal, message, target) => handleError(type, code, signal, message, target))
     .on(FW.STDOUT_DATA, function (data) {
-        console.log(video1.getName(), FW.STDOUT_DATA, data.length);
+        //console.log(video1.getName(), FW.STDOUT_DATA, data.length, data[data.length -2], data[data.length -1]);
+        console.log('stdout data', video1.getName(), data.length, data[0], data[1], data[data.length - 2], data[data.length - 1]);
     })
     .on(FW.STDERR_DATA, function (data) {
-        console.log(video1.getName(), FW.STDERR_DATA, data.length);
+        console.log('stderr data', video1.getName(), data.length, data[0], data[1], data[data.length - 2], data[data.length - 1]);
     })
     .on(FW.STDIN_DATA, function (data) {
-        console.log(video1.getName(), FW.STDIN_DATA, data.length);
+        console.log('stdin data', video1.getName(), data.length, data[0], data[1], data[data.length - 2], data[data.length - 1]);
     })
     .init();
 

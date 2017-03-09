@@ -1,5 +1,5 @@
 #ffmpeg-watchdog
-Monitor an ffmpeg process and automatically respawn it if it has exited. Designed to be used when connecting to remote video sources that may be intermittent. Best used when timeout flags are passed to ffmpeg.
+Monitor an ffmpeg process and automatically respawn it upon exit. It is designed to be used when connecting to remote video sources that may be intermittent. It is best used when timeout flags are passed to ffmpeg. It also has a built-in jpeg parser.
 
 ###installation:
 ``` 
@@ -66,9 +66,9 @@ var options = {
     retry : 5,
     wait : 10,
     reset : 20,
-    stdoutI2PC : 'mjpeg',
-    stderrI2PC : 'mjpeg',
-    stdinI2PC : 'mjpeg'
+    stdoutJpeg : true,
+    stderrJpeg : true,
+    stdinJpeg : true
 };
 
 //create new instance and attach listeners and call .init() to start
@@ -94,18 +94,18 @@ var video1 = new FW(params, options)
 
 **options.retry(0 - 300):** how many times should watchdog attempt to restart ffmpeg process that has exited
 
-**options.wait(5 - 300):** how many seconds should watchdog wait to attempt to restart ffmpeg
+**options.wait(1 - 300):** how many seconds should watchdog wait to attempt to restart ffmpeg
 
 **options.reset(10 - 300):** how many seconds should ffmpeg be running to be considered successful
 
-**options.stdoutI2PC:** set image2pipe codec to "mjpeg" if output on pipe:1 needs to be parsed into individual jpegs before emitting data 
+**options.stdoutJpeg:** set to true if output on pipe:1 needs to be parsed into individual jpegs before emitting data 
 
-**options.stderrI2PC:** set image2pipe codec to "mjpeg" if output on pipe:2 needs to be parsed into individual jpegs before emitting data
+**options.stderrJpeg:** set to true if output on pipe:2 needs to be parsed into individual jpegs before emitting data
 
-**options.stdinI2PC:** set image2pipe codec to "mjpeg" if output on pipe:0 needs to be parsed into individual jpegs before emitting data
+**options.stdinJpeg:** set to true if output on pipe:0 needs to be parsed into individual jpegs before emitting data
 
 #Warning
-If setting stdoutI2PC, stderrI2PC, or stdinI2PC to "mjpeg" please ensure that you are using -c:v mjpeg and -f image2pipe in the ffmpeg params for that pipe, otherwise the buffer will not flush and your app will crash!
+If setting stdoutJpeg, stderrJpeg, or stdinJpeg to "true" please ensure that you are using -c:v mjpeg and -f image2pipe in the ffmpeg params for that pipe, otherwise the buffer will not flush and your app will crash!
 
 Please take a look in the <a href="https://github.com/kevinGodell/ffmpeg-watchdog/tree/master/examples">examples folder</a>. There is an example for <a href="https://github.com/kevinGodell/ffmpeg-watchdog/blob/master/examples/http.js">http</a> and <a href="https://github.com/kevinGodell/ffmpeg-watchdog/blob/master/examples/rtsp.js">rtsp</a> remote video sources.
 
