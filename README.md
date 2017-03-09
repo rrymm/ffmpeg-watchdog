@@ -3,7 +3,7 @@ Monitor an ffmpeg process and automatically respawn it upon exit. It is designed
 
 ###installation:
 ``` 
-npm install ffmpeg-watchdog
+npm install ffmpeg-watchdog --save
 ```
 ###usage:
 ```
