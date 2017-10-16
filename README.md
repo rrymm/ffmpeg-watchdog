@@ -1,11 +1,11 @@
-#ffmpeg-watchdog
+# ffmpeg-watchdog
 Monitor an ffmpeg process and automatically respawn it upon exit. It is designed to be used when connecting to remote video sources that may be intermittent. It is best used when timeout flags are passed to ffmpeg. It also has a built-in jpeg parser.
 
-###installation:
+### installation:
 ``` 
 npm install ffmpeg-watchdog --save
 ```
-###usage:
+### usage:
 ```
 const FW = require('ffmpeg-watchdog');
 
@@ -104,7 +104,7 @@ var video1 = new FW(params, options)
 
 **options.stdinJpeg:** set to true if output on pipe:0 needs to be parsed into individual jpegs before emitting data
 
-#Warning
+# Warning
 If setting stdoutJpeg, stderrJpeg, or stdinJpeg to "true" please ensure that you are using -c:v mjpeg and -f image2pipe in the ffmpeg params for that pipe, otherwise the buffer will not flush and your app will crash!
 
 Please take a look in the <a href="https://github.com/kevinGodell/ffmpeg-watchdog/tree/master/examples">examples folder</a>. There is an example for <a href="https://github.com/kevinGodell/ffmpeg-watchdog/blob/master/examples/http.js">http</a> and <a href="https://github.com/kevinGodell/ffmpeg-watchdog/blob/master/examples/rtsp.js">rtsp</a> remote video sources.
