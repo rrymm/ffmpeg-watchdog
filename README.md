@@ -1,4 +1,6 @@
 # ffmpeg-watchdog
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/kevinGodell/ffmpeg-watchdog.svg)](https://greenkeeper.io/)
 Monitor an ffmpeg process and automatically respawn it upon exit. It is designed to be used when connecting to remote video sources that may be intermittent. It is best used when timeout flags are passed to ffmpeg. It also has a built-in jpeg parser.
 
 ### installation:
